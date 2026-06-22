@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import TaskForm from "./components/TaskForm";
+import TaskList from "./components/TaskList";
 
 import type {
   ITask,
@@ -23,21 +24,17 @@ function App() {
       createdAt: Date.now(),
     };
 
-    setTasks((prevTasks) => [
-      ...prevTasks,
+    setTasks((prev) => [
+      ...prev,
       newTask,
     ]);
-
-    console.log(
-      "Tasks:",
-      [...tasks, newTask]
-    );
   };
 
   return (
-    <TaskForm
-      onAddTask={handleAddTask}
-    />
+    <div>
+      <TaskForm onAddTask={handleAddTask} />
+      <TaskList tasks={tasks} />
+    </div>
   );
 }
 
