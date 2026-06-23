@@ -24,10 +24,13 @@ const getPriorityColor = (
   switch (priority) {
     case "Rendah":
       return "default";
+
     case "Sedang":
       return "warning";
+
     case "Tinggi":
       return "error";
+
     default:
       return "default";
   }
@@ -41,7 +44,7 @@ const TaskList = ({
   if (tasks.length === 0) {
     return (
       <Typography sx={{ mt: 3 }}>
-        Belum ada task
+        Belum ada tugas
       </Typography>
     );
   }
@@ -53,11 +56,16 @@ const TaskList = ({
           <CardContent>
             <Stack
               direction="row"
-              sx={{ justifyContent: "space-between", alignItems: "center" }}
+              sx={{
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
             >
-              {/* LEFT SIDE */}
-              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                {/* TOGGLE CHECKBOX */}
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{ alignItems: "center" }}
+              >
                 <Checkbox
                   checked={task.done}
                   onChange={() =>
@@ -65,20 +73,22 @@ const TaskList = ({
                   }
                 />
 
-                {/* TITLE */}
                 <Typography
                   sx={{
-                    textDecoration: task.done
-                      ? "line-through"
-                      : "none",
+                    textDecoration:
+                      task.done
+                        ? "line-through"
+                        : "none",
                   }}
                 >
                   {task.title}
                 </Typography>
               </Stack>
 
-              {/* RIGHT SIDE */}
-              <Stack direction="row" spacing={1}>
+              <Stack
+                direction="row"
+                spacing={1}
+              >
                 <Chip
                   label={task.priority}
                   color={getPriorityColor(
@@ -87,19 +97,17 @@ const TaskList = ({
                   size="small"
                 />
 
-                {/* DELETE BUTTON */}
                 <IconButton
+                  color="error"
                   onClick={() =>
                     onDeleteTask(task.id)
                   }
-                  color="error"
                 >
                   <DeleteIcon />
                 </IconButton>
               </Stack>
             </Stack>
 
-            {/* STATUS */}
             <Typography
               variant="caption"
               sx={{ color: "gray" }}
