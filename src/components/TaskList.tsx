@@ -4,12 +4,18 @@ import {
   Chip,
   Stack,
   Typography,
+  IconButton,
+  Checkbox,
 } from "@mui/material";
+
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import type { ITask } from "../types/task";
 
 interface TaskListProps {
   tasks: ITask[];
+  onToggleTask: (id: string) => void;
+  onDeleteTask: (id: string) => void;
 }
 
 const getPriorityColor = (
@@ -29,13 +35,12 @@ const getPriorityColor = (
 
 const TaskList = ({
   tasks,
+  onToggleTask,
+  onDeleteTask,
 }: TaskListProps) => {
-  // EMPTY STATE (conditional rendering)
   if (tasks.length === 0) {
     return (
-      <Typography
-        sx={{ mt: 3, textAlign: "center" }}
-      >
+      <Typography sx={{ mt: 3 }}>
         Belum ada tugas
       </Typography>
     );
@@ -50,26 +55,48 @@ const TaskList = ({
               direction="row"
               sx={{ justifyContent: "space-between", alignItems: "center" }}
             >
-              {/* TASK TITLE */}
-              <Typography
-                sx={{
-                  textDecoration: task.done
-                    ? "line-through"
-                    : "none",
-                  fontWeight: 500,
-                }}
-              >
-                {task.title}
-              </Typography>
+              {/* LEFT SIDE */}
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                {/* TOGGLE CHECKBOX */}
+                <Checkbox
+                  checked={task.done}
+                  onChange={() =>
+                    onToggleTask(task.id)
+                  }
+                />
 
-              {/* PRIORITY CHIP */}
-              <Chip
-                label={task.priority}
-                color={getPriorityColor(
-                  task.priority
-                )}
-                size="small"
-              />
+                {/* TITLE */}
+                <Typography
+                  sx={{
+                    textDecoration: task.done
+                      ? "line-through"
+                      : "none",
+                  }}
+                >
+                  {task.title}
+                </Typography>
+              </Stack>
+
+              {/* RIGHT SIDE */}
+              <Stack direction="row" spacing={1}>
+                <Chip
+                  label={task.priority}
+                  color={getPriorityColor(
+                    task.priority
+                  )}
+                  size="small"
+                />
+
+                {/* DELETE BUTTON */}
+                <IconButton
+                  onClick={() =>
+                    onDeleteTask(task.id)
+                  }
+                  color="error"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Stack>
             </Stack>
 
             {/* STATUS */}
