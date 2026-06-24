@@ -17,6 +17,7 @@ function App() {
   const [filter, setFilter] =
     useState<FilterStatus>("Semua");
 
+  // ADD TASK
   const handleAddTask = (
     title: string,
     priority: Priority
@@ -35,6 +36,7 @@ function App() {
     ]);
   };
 
+  // TOGGLE TASK
   const handleToggleTask = (
     id: string
   ) => {
@@ -50,6 +52,7 @@ function App() {
     );
   };
 
+  // DELETE TASK
   const handleDeleteTask = (
     id: string
   ) => {
@@ -60,6 +63,7 @@ function App() {
     );
   };
 
+  // FILTER TASKS
   const filteredTasks =
     tasks.filter((task) => {
       if (filter === "Aktif") {
@@ -72,6 +76,17 @@ function App() {
 
       return true;
     });
+
+  // COUNTERS
+  const total = tasks.length;
+
+  const active = tasks.filter(
+    (task) => !task.done
+  ).length;
+
+  const done = tasks.filter(
+    (task) => task.done
+  ).length;
 
   return (
     <div
@@ -92,6 +107,10 @@ function App() {
 
       <TaskList
         tasks={filteredTasks}
+        filter={filter}
+        total={total}
+        active={active}
+        done={done}
         onToggleTask={
           handleToggleTask
         }
