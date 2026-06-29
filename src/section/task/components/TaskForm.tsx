@@ -9,7 +9,7 @@ import {
   FormControl,
 } from "@mui/material";
 
-import type { Priority } from "../types/task";
+import type { Priority } from "../../../types/task";
 
 interface ITaskFormProps {
   onAddTask: (
