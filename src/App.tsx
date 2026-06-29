@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
@@ -12,11 +12,27 @@ import type {
 
 function App() {
   const [tasks, setTasks] =
-    useState<ITask[]>([]);
+    useState<ITask[]>(() => {
+      // Ambil data tasks dari localStorage saat pertama kali render
+      const storedTasks =
+        localStorage.getItem("tasks");
+      return storedTasks
+        ? JSON.parse(storedTasks)
+        : [];
+    });
 
   const [filter, setFilter] =
     useState<FilterStatus>("Semua");
 
+
+  // SAVE TASKS TO LOCAL STORAGE
+  useEffect(() => {
+    localStorage.setItem(
+      "tasks",
+      JSON.stringify(tasks)
+    );
+  }, [tasks]);
+  
   // ADD TASK
   const handleAddTask = (
     title: string,
@@ -30,10 +46,10 @@ function App() {
       createdAt: Date.now(),
     };
 
-    setTasks((prev) => [
+    setTasks(((prev) => [
       ...prev,
       newTask,
-    ]);
+    ]));
   };
 
   // TOGGLE TASK
@@ -44,10 +60,13 @@ function App() {
       prev.map((task) =>
         task.id === id
           ? {
-              ...task,
-              done: !task.done,
+              id: task.id,
+              title : task.title,
+              priority: task.priority,
+              createdAt: task.createdAt,
+              done: task.done === true ? false : true,
             }
-          : task
+          : task 
       )
     );
   };

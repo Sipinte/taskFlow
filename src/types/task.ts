@@ -15,3 +15,6 @@ export interface ITask {
   done: boolean;
   createdAt: number;
 }
+
+// ini namanya union type, artinya 
+// hanya bisa salah satu dari beberapa tipe
