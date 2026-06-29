@@ -14,6 +14,7 @@ export interface ITask {
   priority: Priority;
   done: boolean;
   createdAt: number;
+  dueDate?: string; //  property for due date
 }
 
 // ini namanya union type, artinya 

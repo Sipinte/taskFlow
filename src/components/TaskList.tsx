@@ -39,6 +39,14 @@ const getPriorityColor = (priority: ITask["priority"]) => {
   }
 };
 
+// Cek apakah deadline sudah lewat
+const isOverdue = (task: ITask) => {
+  if (!task.dueDate || task.done) return false;
+  const today = new Date().toISOString().split("T")[0];
+  const due = new Date(task.dueDate).toISOString().split("T")[0];
+  return due < today;
+};
+
 const TaskList = ({
   tasks,
   filter,
@@ -136,6 +144,16 @@ const TaskList = ({
                     color={getPriorityColor(task.priority)}
                     size="small"
                   />
+
+                  {/* RIGHT */}
+                  {isOverdue(task) && (
+                    <Chip
+                      label="Terlambat"
+                      color="error"
+                      size="small"
+                    />
+                  )}
+
                   <IconButton
                     color="error"
                     onClick={() => onDeleteTask(task.id)}
@@ -147,6 +165,7 @@ const TaskList = ({
 
               <Typography variant="caption" sx={{ color: "gray" }}>
                 {task.done ? "Selesai" : "Aktif"}
+                {task.dueDate ? ` . Deadline: ${task.dueDate}` : ""}
               </Typography>
             </CardContent>
           </Card>
