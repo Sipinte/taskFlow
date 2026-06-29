@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-
+import { useState } from "react";
+import useLocalStorage from "./hooks/useLocalStorage"
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 import FilterBar from "./components/FilterBar";
@@ -11,27 +11,15 @@ import type {
 } from "./types/task";
 
 function App() {
+  
   const [tasks, setTasks] =
-    useState<ITask[]>(() => {
-      // Ambil data tasks dari localStorage saat pertama kali render
-      const storedTasks =
-        localStorage.getItem("tasks");
-      return storedTasks
-        ? JSON.parse(storedTasks)
-        : [];
-    });
-
+    useLocalStorage<ITask[]>(
+      "tasks",
+      []
+    );
+    
   const [filter, setFilter] =
     useState<FilterStatus>("Semua");
-
-
-  // SAVE TASKS TO LOCAL STORAGE
-  useEffect(() => {
-    localStorage.setItem(
-      "tasks",
-      JSON.stringify(tasks)
-    );
-  }, [tasks]);
   
   // ADD TASK
   const handleAddTask = (
