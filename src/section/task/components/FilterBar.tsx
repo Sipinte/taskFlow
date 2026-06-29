@@ -5,7 +5,7 @@ import {
 } from "@mui/material";
 
 // Mengimport tipe FilterStatus untuk TypeScript
-import type { FilterStatus } from "../types/task";
+import type { FilterStatus } from "../../../types/task";
 
 // Mendefinisikan tipe props yang diterima component FilterBar
 interface FilterBarProps {
