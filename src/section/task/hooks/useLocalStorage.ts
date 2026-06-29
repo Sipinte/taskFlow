@@ -13,7 +13,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
     localStorage.setItem(key, JSON.stringify(value))
   }, [key, value])
 
-  // Kembalikan seperti useState biasa — [nilai, fungsiUpdate]
+  // Kembalikan seperti useState biasa — [nilai, fungsiUpdatee]
   return [value, setValue] as const
 }
 
