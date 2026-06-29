@@ -70,6 +70,23 @@ function App() {
     );
   };
 
+    //EDIT TASK
+  const handleEditTask = (
+    id: string,
+    newTitle: string
+  ) => {
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id
+          ? {
+              ...task,
+              title: newTitle,
+            }
+          : task
+      )
+    );
+  }
+
   // FILTER TASKS
   const filteredTasks =
     tasks.filter((task) => {
@@ -124,9 +141,14 @@ function App() {
         onDeleteTask={
           handleDeleteTask
         }
+        onEditTask={
+          handleEditTask
+        }
       />
     </div>
   );
+
+
 }
 
 export default App;
