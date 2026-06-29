@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useLocalStorage from "./hooks/useLocalStorage"
+import useLocalStorage from "./hooks/useLocalStorage";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 import FilterBar from "./components/FilterBar";
@@ -11,20 +11,18 @@ import type {
 } from "./types/task";
 
 function App() {
-  
+
   const [tasks, setTasks] =
-    useLocalStorage<ITask[]>(
-      "tasks",
-      []
-    );
-    
+    useLocalStorage<ITask[]>("tasks", []);
+
   const [filter, setFilter] =
     useState<FilterStatus>("Semua");
-  
+
   // ADD TASK
   const handleAddTask = (
     title: string,
-    priority: Priority
+    priority: Priority,
+    dueDate?: string
   ) => {
     const newTask: ITask = {
       id: Date.now().toString(),
@@ -32,45 +30,31 @@ function App() {
       priority,
       done: false,
       createdAt: Date.now(),
+      dueDate, // ← string langsung, tidak dikonversi
     };
 
-    setTasks(((prev) => [
-      ...prev,
-      newTask,
-    ]));
+    setTasks((prev) => [...prev, newTask]);
   };
 
   // TOGGLE TASK
-  const handleToggleTask = (
-    id: string
-  ) => {
+  const handleToggleTask = (id: string) => {
     setTasks((prev) =>
       prev.map((task) =>
         task.id === id
-          ? {
-              id: task.id,
-              title : task.title,
-              priority: task.priority,
-              createdAt: task.createdAt,
-              done: task.done === true ? false : true,
-            }
-          : task 
+          ? { ...task, done: !task.done }
+          : task
       )
     );
   };
 
   // DELETE TASK
-  const handleDeleteTask = (
-    id: string
-  ) => {
+  const handleDeleteTask = (id: string) => {
     setTasks((prev) =>
-      prev.filter(
-        (task) => task.id !== id
-      )
+      prev.filter((task) => task.id !== id)
     );
   };
 
-    //EDIT TASK
+  // EDIT TASK
   const handleEditTask = (
     id: string,
     newTitle: string
@@ -78,39 +62,23 @@ function App() {
     setTasks((prev) =>
       prev.map((task) =>
         task.id === id
-          ? {
-              ...task,
-              title: newTitle,
-            }
+          ? { ...task, title: newTitle }
           : task
       )
     );
-  }
+  };
 
   // FILTER TASKS
-  const filteredTasks =
-    tasks.filter((task) => {
-      if (filter === "Aktif") {
-        return !task.done;
-      }
-
-      if (filter === "Selesai") {
-        return task.done;
-      }
-
-      return true;
-    });
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === "Aktif") return !task.done;
+    if (filter === "Selesai") return task.done;
+    return true;
+  });
 
   // COUNTERS
   const total = tasks.length;
-
-  const active = tasks.filter(
-    (task) => !task.done
-  ).length;
-
-  const done = tasks.filter(
-    (task) => task.done
-  ).length;
+  const active = tasks.filter((task) => !task.done).length;
+  const done = tasks.filter((task) => task.done).length;
 
   return (
     <div
@@ -120,9 +88,7 @@ function App() {
         padding: "24px",
       }}
     >
-      <TaskForm
-        onAddTask={handleAddTask}
-      />
+      <TaskForm onAddTask={handleAddTask} />
 
       <FilterBar
         filter={filter}
@@ -135,20 +101,12 @@ function App() {
         total={total}
         active={active}
         done={done}
-        onToggleTask={
-          handleToggleTask
-        }
-        onDeleteTask={
-          handleDeleteTask
-        }
-        onEditTask={
-          handleEditTask
-        }
+        onToggleTask={handleToggleTask}
+        onDeleteTask={handleDeleteTask}
+        onEditTask={handleEditTask}
       />
     </div>
   );
-
-
 }
 
 export default App;
