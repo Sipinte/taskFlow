@@ -7,106 +7,156 @@ import {
   TextField,
   InputLabel,
   FormControl,
+  FormHelperText,
+  Chip,
+  Box,
 } from "@mui/material";
+import type { SelectChangeEvent } from "@mui/material";
 
-import type { Priority } from "../../../types/task";
+import type { Priority, Category } from "../../../types/task";
+import { PRIORITY_OPTIONS, CATEGORY_OPTIONS } from "../../../types/task";
+
+export interface ITaskFormValues {
+  title: string;
+  priority: Priority;
+  category: Category[];
+  dueDate?: string;
+}
 
 interface ITaskFormProps {
-  onAddTask: (
-    title: string,
-    priority: Priority,
-    dueDate?: string 
-  ) => void;
+  onSubmit: (values: ITaskFormValues) => void;
+  onCancel?: () => void;
+  submitLabel?: string;
+  initialValues?: ITaskFormValues;
 }
 
 const TaskForm = ({
-  onAddTask,
+  onSubmit,
+  onCancel,
+  submitLabel = "Tambah Tugas",
+  initialValues,
 }: ITaskFormProps) => {
-
-  const [title, setTitle] = useState("");
-  const [priority, setPriority] = useState<Priority>("Rendah");
+  const [title, setTitle] = useState(initialValues?.title ?? "");
+  const [priority, setPriority] = useState<Priority>(
+    initialValues?.priority ?? "Rendah"
+  );
+  const [category, setCategory] = useState<Category[]>(
+    initialValues?.category ?? []
+  );
+  const [dueDate, setDueDate] = useState(initialValues?.dueDate ?? "");
   const [submitted, setSubmitted] = useState(false);
-  const [dueDate, setDueDate] = useState(""); // ← tambah ini
 
   const hasTitleError = submitted && !title.trim();
+  const hasCategoryError = submitted && category.length === 0;
 
-  const handleSubmit = (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleCategoryChange = (e: SelectChangeEvent<Category[]>) => {
+    const value = e.target.value;
+    setCategory(
+      typeof value === "string" ? (value.split(",") as Category[]) : value
+    );
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     setSubmitted(true);
 
-    if (!title.trim()) {
+    if (!title.trim() || category.length === 0) {
       return;
     }
 
-    onAddTask(
-      title.trim(),
+    onSubmit({
+      title: title.trim(),
       priority,
-      dueDate || undefined // ← tambah ini
-    );
+      category,
+      dueDate: dueDate || undefined,
+    });
 
-    setTitle("");
-    setPriority("Rendah");
-    setDueDate(""); // ← reset dueDate
-    setSubmitted(false);
+    // Reset hanya kalau bukan mode edit (mode add)
+    if (!initialValues) {
+      setTitle("");
+      setPriority("Rendah");
+      setCategory([]);
+      setDueDate("");
+      setSubmitted(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <Stack spacing={2}>
-
-        {/* Input judul task */}
         <TextField
           label="Nama Tugas"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           error={hasTitleError}
-          helperText={
-            hasTitleError ? "Kolom ini wajib diisi" : ""
-          }
+          helperText={hasTitleError ? "Kolom ini wajib diisi" : ""}
           required
           fullWidth
         />
 
-        {/* Input deadline — di luar FormControl */}
         <TextField
           label="Deadline"
           type="date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
           fullWidth
-          slotProps={{
-            inputLabel: { shrink: true }
-          }}
+          InputLabelProps={{ shrink: true }}
         />
 
-        {/* Dropdown prioritas */}
         <FormControl fullWidth>
-          <InputLabel id="priority-label">
-            Prioritas
-          </InputLabel>
-
+          <InputLabel id="priority-label">Prioritas</InputLabel>
           <Select
             labelId="priority-label"
             label="Prioritas"
             value={priority}
-            onChange={(e) =>
-              setPriority(e.target.value as Priority)
-            }
+            onChange={(e) => setPriority(e.target.value as Priority)}
           >
-            <MenuItem value="Rendah">Rendah</MenuItem>
-            <MenuItem value="Sedang">Sedang</MenuItem>
-            <MenuItem value="Tinggi">Tinggi</MenuItem>
+            {PRIORITY_OPTIONS.map((opt) => (
+              <MenuItem key={opt} value={opt}>
+                {opt}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
 
-        <Button
-          type="submit"
-          variant="contained"
-        >
-          Tambah Tugas
-        </Button>
+        <FormControl fullWidth error={hasCategoryError}>
+          <InputLabel id="category-label">Kategori</InputLabel>
+          <Select
+            labelId="category-label"
+            label="Kategori"
+            multiple
+            value={category}
+            onChange={handleCategoryChange}
+            renderValue={(selected) => (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                {(selected as Category[]).map((value) => (
+                  <Chip key={value} label={value} size="small" />
+                ))}
+              </Box>
+            )}
+          >
+            {CATEGORY_OPTIONS.map((opt) => (
+              <MenuItem key={opt} value={opt}>
+                {opt}
+              </MenuItem>
+            ))}
+          </Select>
+          {hasCategoryError && (
+            <FormHelperText>Pilih minimal satu kategori</FormHelperText>
+          )}
+        </FormControl>
+
+        <Stack direction="row" spacing={2}>
+          <Button type="submit" variant="contained">
+            {submitLabel}
+          </Button>
+          {onCancel && (
+            <Button type="button" variant="text" onClick={onCancel}>
+              Batal
+            </Button>
+          )}
+        </Stack>
       </Stack>
     </form>
   );
