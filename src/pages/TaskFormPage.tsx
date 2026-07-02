@@ -3,7 +3,7 @@ import { Paper, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 
 import TaskForm from "../section/task/components/TaskForm";
-import type { ITaskFormValues } from "../section/task/components/TaskForm";
+import type { TaskSchemaType } from "../section/task/utils/taskSchema";
 import { useTasks } from "../section/task/context/TaskContext";
 
 import type { ITask } from "../types/task";
@@ -29,7 +29,7 @@ export default function TaskFormPage() {
     return null;
   }
 
-  const handleSubmit = (values: ITaskFormValues) => {
+  const handleSubmit = (values: TaskSchemaType) => {
     if (isEditMode && existingTask) {
       updateTask(existingTask.id, values);
     } else {
